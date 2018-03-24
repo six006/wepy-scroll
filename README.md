@@ -8,7 +8,7 @@ npm run dev
 
 用微信开发工具打开目录下的dist文件夹
 
-![]('./src/assets/wx-gif.gif')
+![](./src/assets/wx-gif.gif)
 
 ## position: sticky;
 改新属性可以让一个元素在滚动到顶部是自动吸顶, 类似于fixed, 只是之前我们的做法都是使用fixed(需要检测滚动距离,消耗cpu性能), 
