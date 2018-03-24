@@ -46,10 +46,14 @@ export default class categoryScroll extends wepy.page {
       {name: 'pineapple', num: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]},
       {name: 'watermelon', num: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]}
     ],
+    // 当前分类的索引
     currentCategory: 0,
+    // 每个分类距离顶部的高度的数组
     productsTop: [],
     categoryTop: 10000,
+    // 用于存储每次滚动结束之后的距离, 可用来判断滚动的方向
     moveStartPos: 0,
+    // 点击分类的名称, 用于点击跳转
     scrollInTo: ''
   }
 
@@ -103,6 +107,7 @@ export default class categoryScroll extends wepy.page {
   }
 
   onReady () {
+    // 页面准备完成之后获取每个分类距离顶部的高度, 存储在数组productsTop中
     var query = wx.createSelectorQuery()
     this.productsTop = []
     query.selectAll('.product').boundingClientRect((rect) => {
@@ -111,7 +116,7 @@ export default class categoryScroll extends wepy.page {
       })
       this.$apply()
     })
-
+    
     query.selectAll('.cs-fix').boundingClientRect((rect) => {
       this.categoryTop = rect[0].top
       this.$apply()
