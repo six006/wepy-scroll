@@ -1,0 +1,16 @@
+{
+	"description": "A WePY project",
+	"setting": {
+		"urlCheck": false,
+		"es6": false,
+		"postcss": false,
+		"minified": false,
+		"newFeature": true
+	},
+	"compileType": "miniprogram",
+	"appid": "",
+	"projectname": "test-minip",
+	"miniprogramRoot": "./dist",
+	"libVersion": "1.9.1",
+	"condition": {}
+}

@@ -1,0 +1,192 @@
+<template>
+  <view>
+    <scroll-view class="category-scroll" 
+      scroll-into-view="{{scrollInTo}}" 
+      bindscroll="scrolling" 
+      scroll-with-animation="true" scroll-y="true">
+      <view>
+        <view class='cs-banner'>banner</view>
+        <view class="cs-fix">
+          <view>
+            <repeat for="{{fruits}}" key="index">
+              <view class="cate {{currentCategory==index?'selected':''}}" 
+                @tap.stop="clickScrollInTo" 
+                data-name="{{item.name}}">{{item.name}}</view>
+            </repeat>
+          </view>
+        </view>
+        
+        <view class="products" id="prds">
+          <repeat for="{{fruits}}" key="index" item="item" index="index">
+            <view class="product" id="{{item.name}}">{{item.name}}</view>
+            <view class="productBox" wx:for="{{item.num}}" wx:for-item="itm" wx:key="idx" wx:for-index="idx">
+              第{{idx}}个{{item.name}}
+            </view>
+          </repeat>
+        </view>
+      </view>
+    </scroll-view>
+  </view>
+</template>
+
+<script>
+import wepy from 'wepy'
+
+export default class categoryScroll extends wepy.page {
+  config = {
+    navigationBarTitleText: '楼层滚动'
+  }
+  components = {}
+
+  data = {
+    fruits: [
+      {name: 'apple', num: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]},
+      {name: 'banana', num: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]},
+      {name: 'orange', num: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]},
+      {name: 'pineapple', num: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]},
+      {name: 'watermelon', num: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]}
+    ],
+    currentCategory: 0,
+    productsTop: [],
+    categoryTop: 10000,
+    moveStartPos: 0,
+    scrollInTo: ''
+  }
+
+  computed = {}
+
+  // onPageScroll (e) { s
+  onScrollViewScroll (e) {
+    // 当前滚动的距离
+    let scrollTop = e.scrollTop
+    // moveStartPos记录着上一次滚动完成时的位置, 用于判断滚动方向
+    // 如果现在的滚动距离大于moveStartPos说明正在往下滚动
+    if (scrollTop > this.moveStartPos) {
+      this.moveStartPos = scrollTop
+      // 遍历每个商品距离顶部的距离
+      this.productsTop.forEach((item, index) => {
+        // 如果滚动的距离大于某个商品到顶部的距离说明该商品到了顶部, 减10是为了减少触发距离
+        if (scrollTop > item.top - 10) {
+          // 当前分类的索引小于满足条件的商品索引就赋值, 跳到下一个分类
+          if (this.currentCategory < index) {
+            this.currentCategory = index
+            this.$apply()
+          }
+        }
+      })
+    // 如果现在的滚动距离小于moveStartPos说明正在往上滚动    
+    } else if (scrollTop < this.moveStartPos) {
+      this.moveStartPos = scrollTop
+      this.productsTop.forEach((item, index) => {
+        if (scrollTop < item.top - 10) {
+          if (this.currentCategory >= index) {
+            this.currentCategory = index ? index - 1 : index
+            this.$apply()
+          }
+        }
+      })
+    }
+    this.$apply()
+  }
+
+  methods = {
+    // scroll-view滚动时触发
+    scrolling (e) {
+      // 将当前的距离传入
+      this.onScrollViewScroll({scrollTop: e.detail.scrollTop})
+    },
+    // 点击分类跳转
+    clickScrollInTo (e) {
+      this.scrollInTo = e.currentTarget.dataset.name
+      this.$apply()
+    }
+  }
+
+  onReady () {
+    var query = wx.createSelectorQuery()
+    this.productsTop = []
+    query.selectAll('.product').boundingClientRect((rect) => {
+      rect.forEach((item, index) => {
+        this.productsTop.push({top: item.top})
+      })
+      this.$apply()
+    })
+
+    query.selectAll('.cs-fix').boundingClientRect((rect) => {
+      this.categoryTop = rect[0].top
+      this.$apply()
+    }).exec()
+  }
+}
+</script>
+<style lang="less">
+.category-scroll {
+  width: 100%;
+  height: 100vh;
+  .cs-banner {
+    width: 100%;
+    height: 300rpx;
+    color: white;
+    background-color: blue;
+    line-height: 300rpx;
+    text-align: center;
+  }
+  .cs-fixed {
+    position: fixed;
+    top: 0;
+    left: 0;
+  }
+  .cs-fix {
+    width: 100%;
+    height: 60rpx;
+    // position: fixed;
+    // top: 0;
+    // left: 0;
+    position: sticky;
+    position: --webkit-sticky;
+    top: 0rpx;
+    view {
+      width: 100%;
+      height: 100%;
+      line-height: 60rpx;
+      display:flex;
+      flex-direction: row;
+      justify-content: space-around;
+      background-color: rgba(0,0,0,0.2);
+      .cate {
+        text-align: center;
+        font-size: 26rpx;
+        color: #fff;
+      }
+      .selected {
+        background-color: red;
+      }
+    }
+  }
+  .products {
+    width: 100%;
+    margin-bottom: 500rpx;
+    > view:nth-child(2n) {
+      background-color: #c2c2c2;
+    }
+    > view:nth-child(2n+1) {
+      background-color: #bbbbbb;
+    }
+    .product {
+      height: 800rpx;
+      display: flex;
+      flex-direction: row;
+      justify-content: center;
+      align-items: center;
+      // color: #a8a1a1;
+    }
+    .productBox {
+      width: 100%;
+      height: 300rpx;
+      line-height: 300rpx;
+      text-align: center;
+      color: #a8a1a1;
+    }
+  }
+}
+</style>
