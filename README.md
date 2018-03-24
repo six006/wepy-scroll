@@ -1,6 +1,13 @@
 # wepy-scroll
 微信小程序楼层跳跃, 滚动楼层. 滚动商品时触发分类切换, 商品分类联动
 
+# 运行
+npm install
+
+npm run dev
+
+用微信开发工具打开目录下的dist文件夹
+
 ![]('./src/assets/wx-gif.gif')
 
 ## position: sticky;
